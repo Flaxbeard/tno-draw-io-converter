@@ -83,7 +83,7 @@
           
 
             .userInput {
-                height: 500px;
+                height: 300px;
             }
 
             .output {
@@ -187,6 +187,11 @@
                         <input type="range" min="25" max="300" value="80" step="0.25"  class="slider" id="vertSpacing">
                         <span>Vertical spacing: <span id="vertSpacingLabel">80</span></span>
                     </div>
+                    <div class="slider">
+                        <span>Tag:</span>
+
+                        <input type="text" value="BRA" id="tag"/>
+                    </div>
                 </div>
                 <div class="subpage">
                     <div class="previewOuter">
@@ -232,7 +237,6 @@
 
             const NON_ALPHANUMERIC_REGEX = /[^a-zA-Z0-9_]+/g;
 
-            const country_tag = 'BRA';
 
             const BASE_FOCUS = `
 shared_focus = {
@@ -247,7 +251,7 @@ shared_focus = {
 <prereqs><exclusives>}
 `
 
-            function generateFocusCode(text, horizSpacingValue, vertSpacingValue) {
+            function generateFocusCode(text, horizSpacingValue, vertSpacingValue, tag) {
                 const foci = {};
 
                 for (const box of text.matchAll(BOX_REGEX)) {
@@ -271,7 +275,7 @@ shared_focus = {
 
                     const focusName = text;
                     let focusTag = text.replaceAll(" ", "_").toLowerCase().replaceAll(NON_ALPHANUMERIC_REGEX, "");
-                    focusTag = `${country_tag}_${focusTag}`
+                    focusTag = `${tag}_${focusTag}`
 
                     foci[focusId] = {
                         "id": focusId,
@@ -427,12 +431,13 @@ shared_focus = {
             const horizSpacingLabel = document.getElementById('horizSpacingLabel');
             const vertSpacing = document.getElementById('vertSpacing');
             const vertSpacingLabel = document.getElementById('vertSpacingLabel');
+            const tagInput = document.getElementById('tag');
             const preview = document.getElementById('preview');
 
             function regenerateFocuses() {
                 horizSpacingLabel.setHTML(horizSpacing.value);
                 vertSpacingLabel.setHTML(vertSpacing.value);
-                const [focusCode, locOut, svg] = generateFocusCode(input.value, horizSpacing.value, vertSpacing.value);
+                const [focusCode, locOut, svg] = generateFocusCode(input.value, horizSpacing.value, vertSpacing.value, tagInput.value);
                 focusTextarea.value = focusCode;
                 locTextarea.value = locOut;
                 preview.replaceChildren(svg);
@@ -441,6 +446,7 @@ shared_focus = {
             input.addEventListener("input", regenerateFocuses, false);
             horizSpacing.addEventListener("input", regenerateFocuses, false);
             vertSpacing.addEventListener("input", regenerateFocuses, false);
+            tagInput.addEventListener("input", regenerateFocuses, false);
 
             focusCopy.addEventListener("click", function(e) {
                 focusTextarea.select();
